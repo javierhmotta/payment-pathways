@@ -74,6 +74,8 @@ export function PaymentMethodSelector({ selectedMethod, onMethodChange }: Paymen
   const discountMethods = paymentMethods.filter(m => m.discount);
 
   const selectedMethodData = paymentMethods.find(m => m.id === selectedMethod);
+  const isManualSelected = manualMethods.some(m => m.id === selectedMethod);
+  const isRecurringSelected = recurringMethods.some(m => m.id === selectedMethod);
 
   return (
     <Card>
@@ -92,7 +94,8 @@ export function PaymentMethodSelector({ selectedMethod, onMethodChange }: Paymen
           {/* Manual Section */}
           <div className="space-y-3">
             <div className="space-y-1">
-              <Badge variant="secondary">
+              <Badge variant={isManualSelected ? "default" : "secondary"} className={isManualSelected ? "bg-emerald-600 hover:bg-emerald-600" : ""}>
+                {isManualSelected && <Check className="w-3 h-3 mr-1" />}
                 Manual
               </Badge>
               <p className="text-sm text-muted-foreground">Choose to pay service fee invoices manually—when an invoice is due, you'll receive an email with a payment link</p>
@@ -111,8 +114,8 @@ export function PaymentMethodSelector({ selectedMethod, onMethodChange }: Paymen
           {/* Recurring/Automatic Section */}
           <div className="space-y-3">
             <div className="space-y-1">
-              <Badge variant="default" className="bg-emerald-600 hover:bg-emerald-600">
-                <Check className="w-3 h-3 mr-1" />
+              <Badge variant={isRecurringSelected ? "default" : "secondary"} className={isRecurringSelected ? "bg-emerald-600 hover:bg-emerald-600" : ""}>
+                {isRecurringSelected && <Check className="w-3 h-3 mr-1" />}
                 Automatic
               </Badge>
               <p className="text-sm text-muted-foreground">Your default card will be charged automatically when service fee invoices are due—no other action is required.</p>
