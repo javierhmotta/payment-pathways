@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { PaymentMethodCard } from "@/components/PaymentMethodCard";
 import { AddCardDialog } from "@/components/AddCardDialog";
+import { PaymentMethodSelector, PaymentMethodType } from "@/components/PaymentMethodSelector";
 import { toast } from "sonner";
 
 // Mock data for payment history
@@ -222,6 +222,7 @@ const PaymentHistory = () => {
 };
 
 const PaymentMethods = () => {
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethodType | null>("credit_card");
   const [savedCards, setSavedCards] = useState([{
     id: 1,
     last4: "5408",
@@ -229,17 +230,20 @@ const PaymentMethods = () => {
     isDefault: true
   }]);
   const [showAddCard, setShowAddCard] = useState(false);
-  const [isManualPayment, setIsManualPayment] = useState(false);
+
+  const handleMethodChange = (method: PaymentMethodType) => {
+    setSelectedMethod(method);
+    toast.success(`Payment method updated to ${method.replace(/_/g, ' ')}`);
+  };
 
   const handleAddCard = (cardDetails: any) => {
     setSavedCards([...savedCards, cardDetails]);
-    setIsManualPayment(false);
-    toast.success("Payment method added successfully");
+    toast.success("Card added successfully");
   };
 
   const handleRemoveCard = (cardId: number) => {
     setSavedCards(savedCards.filter(card => card.id !== cardId));
-    toast.success("Payment method removed");
+    toast.success("Card removed");
   };
 
   const handleSetDefault = (cardId: number) => {
@@ -247,45 +251,22 @@ const PaymentMethods = () => {
       ...card,
       isDefault: card.id === cardId
     })));
-    setIsManualPayment(false);
-    toast.success("Default payment method updated");
+    toast.success("Default card updated");
   };
-
-  const handleSelectManualPay = () => {
-    setIsManualPayment(true);
-    toast.success("Manual payment method selected successfully");
-  };
-
-  const handleSelectAutoPay = () => {
-    if (savedCards.some(card => card.isDefault)) {
-      setIsManualPayment(false);
-      toast.success("Automatic payment method selected successfully");
-    } else {
-      toast.error("Please add a card or set a default card first");
-    }
-  };
-
-  const defaultCard = savedCards.find(card => card.isDefault);
 
   return (
-    <Tabs defaultValue={isManualPayment ? "manual" : "autopay"} className="w-full">
-      <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-        <TabsTrigger value="autopay" className="flex items-center gap-2">
-          <CreditCard className="w-4 h-4" />
-          Credit Card Payment
-        </TabsTrigger>
-        <TabsTrigger value="manual" className="flex items-center gap-2">
-          <Wallet className="w-4 h-4" />
-          Other Payment Options
-        </TabsTrigger>
-      </TabsList>
+    <div className="space-y-6">
+      <PaymentMethodSelector 
+        selectedMethod={selectedMethod} 
+        onMethodChange={handleMethodChange} 
+      />
 
-      <TabsContent value="autopay" className="mt-6 space-y-6">
+      {selectedMethod === "credit_card" && (
         <Card>
           <CardHeader>
-            <CardTitle>Credit Cards</CardTitle>
+            <CardTitle>Saved Credit Cards</CardTitle>
             <CardDescription>
-              Cards will be charged automatically when service fee invoices are due
+              Manage your saved cards for automatic payments
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -300,96 +281,12 @@ const PaymentMethods = () => {
             <Button onClick={() => setShowAddCard(true)} variant="outline" className="w-full mt-4">
               Add New Credit Card
             </Button>
-            
-            {!isManualPayment ? (
-              <div className="flex items-center gap-3 p-4 bg-green-50 text-green-700 rounded-lg">
-                <Check className="w-5 h-5 text-green-500" />
-                <div className="text-sm">
-                  {defaultCard ? (
-                    <>Credit Card Payment is currently selected. Card ending in {defaultCard.last4} will be charged when service fee invoices are due.</>
-                  ) : (
-                    <>Credit Card Payment is currently selected. Please set a default card.</>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <Button 
-                onClick={handleSelectAutoPay}
-                className="w-full"
-              >
-                Select Credit Card Payment
-              </Button>
-            )}
           </CardContent>
         </Card>
-      </TabsContent>
-
-      <TabsContent value="manual" className="mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Other Payment Options</CardTitle>
-            <CardDescription>
-              Pay service fee invoices manually using your preferred payment method
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <Card className="p-6">
-              <div className="flex items-start gap-4">
-                <Receipt className="w-6 h-6 text-blue-500 shrink-0 mt-1" />
-                <div>
-                  <h3 className="font-medium text-lg mb-2">How Manual Payments Work</h3>
-                  <ul className="text-sm text-gray-600 space-y-2">
-                    <li className="flex items-start gap-2">
-                      <span className="font-medium">1.</span>
-                      When a service fee invoice is due, you'll receive it via email
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="font-medium">2.</span>
-                      Open the Zaprite invoice and choose your preferred payment method:
-                      <ul className="ml-6 mt-2 space-y-1 text-gray-500">
-                        <li>• Bitcoin (BTC)</li>
-                        <li>• Lightning Network</li>
-                        <li>• ACH Transfer</li>
-                        <li>• Wire Transfer</li>
-                      </ul>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="font-medium">3.</span>
-                      Follow the provided instructions to complete your payment
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </Card>
-
-            {isManualPayment ? (
-              <div className="flex items-center gap-3 p-4 bg-green-50 text-green-700 rounded-lg">
-                <Check className="w-5 h-5 text-green-500" />
-                <div className="text-sm">
-                  Other Payment Options is currently selected. You'll receive service fee invoice payment instructions via email.
-                </div>
-              </div>
-            ) : (
-              <Button 
-                onClick={handleSelectManualPay}
-                className="w-full"
-              >
-                Select Other Payment Options
-              </Button>
-            )}
-
-            <div className="flex items-start gap-4 p-4 bg-blue-50 rounded-lg">
-              <AlertCircle className="w-5 h-5 text-blue-500 mt-0.5" />
-              <div className="text-sm text-blue-700">
-                No setup needed - you'll be able to choose your preferred payment method when processing each service fee invoice through Zaprite.
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
+      )}
 
       <AddCardDialog open={showAddCard} onOpenChange={setShowAddCard} onAddCard={handleAddCard} />
-    </Tabs>
+    </div>
   );
 };
 
