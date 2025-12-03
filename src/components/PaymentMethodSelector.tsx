@@ -16,7 +16,6 @@ export type PaymentMethodType =
 interface PaymentMethod {
   id: PaymentMethodType;
   name: string;
-  description: string;
   icon: React.ReactNode;
   type: "recurring" | "manual";
   discount?: number;
@@ -24,30 +23,8 @@ interface PaymentMethod {
 
 const paymentMethods: PaymentMethod[] = [
   {
-    id: "credit_card",
-    name: "Credit Card",
-    description: "Automatically charged when invoices are due",
-    icon: <CreditCard className="w-5 h-5" />,
-    type: "recurring",
-  },
-  {
-    id: "apple_google_pay",
-    name: "Apple Pay / Google Pay",
-    description: "Pay each invoice manually via mobile wallet",
-    icon: <Smartphone className="w-5 h-5" />,
-    type: "manual",
-  },
-  {
-    id: "cash_app",
-    name: "Cash App",
-    description: "Pay each invoice manually via Cash App",
-    icon: <Wallet className="w-5 h-5" />,
-    type: "manual",
-  },
-  {
     id: "bitcoin",
     name: "Bitcoin",
-    description: "Pay each invoice manually with BTC",
     icon: <Bitcoin className="w-5 h-5" />,
     type: "manual",
     discount: 5,
@@ -55,7 +32,6 @@ const paymentMethods: PaymentMethod[] = [
   {
     id: "lightning",
     name: "Lightning Network",
-    description: "Instant payments via Lightning",
     icon: <Zap className="w-5 h-5" />,
     type: "manual",
     discount: 5,
@@ -63,10 +39,27 @@ const paymentMethods: PaymentMethod[] = [
   {
     id: "usdt",
     name: "USDT (Tether)",
-    description: "Pay each invoice with stablecoin",
     icon: <Coins className="w-5 h-5" />,
     type: "manual",
     discount: 5,
+  },
+  {
+    id: "apple_google_pay",
+    name: "Apple Pay / Google Pay",
+    icon: <Smartphone className="w-5 h-5" />,
+    type: "manual",
+  },
+  {
+    id: "cash_app",
+    name: "Cash App",
+    icon: <Wallet className="w-5 h-5" />,
+    type: "manual",
+  },
+  {
+    id: "credit_card",
+    name: "Credit Card",
+    icon: <CreditCard className="w-5 h-5" />,
+    type: "recurring",
   },
 ];
 
@@ -96,17 +89,16 @@ export function PaymentMethodSelector({ selectedMethod, onMethodChange }: Paymen
           onValueChange={(value) => onMethodChange(value as PaymentMethodType)}
           className="space-y-6"
         >
-          {/* Recurring/Automatic Section */}
+          {/* Manual Section */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Badge variant="default" className="bg-emerald-600 hover:bg-emerald-600">
-                <Check className="w-3 h-3 mr-1" />
-                Automatic
+            <div className="space-y-1">
+              <Badge variant="secondary">
+                Manual
               </Badge>
-              <span className="text-sm text-muted-foreground">No monthly action required</span>
+              <p className="text-sm text-muted-foreground">Choose to pay service fee invoices manually—when an invoice is due, you'll receive an email with a payment link</p>
             </div>
             <div className="space-y-2">
-              {recurringMethods.map((method) => (
+              {manualMethods.map((method) => (
                 <PaymentOptionCard
                   key={method.id}
                   method={method}
@@ -116,16 +108,17 @@ export function PaymentMethodSelector({ selectedMethod, onMethodChange }: Paymen
             </div>
           </div>
 
-          {/* Manual Section */}
+          {/* Recurring/Automatic Section */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">
-                Manual
+            <div className="space-y-1">
+              <Badge variant="default" className="bg-emerald-600 hover:bg-emerald-600">
+                <Check className="w-3 h-3 mr-1" />
+                Automatic
               </Badge>
-              <span className="text-sm text-muted-foreground">Requires action each billing cycle</span>
+              <p className="text-sm text-muted-foreground">Your default card will be charged automatically when service fee invoices are due—no other action is required.</p>
             </div>
             <div className="space-y-2">
-              {manualMethods.map((method) => (
+              {recurringMethods.map((method) => (
                 <PaymentOptionCard
                   key={method.id}
                   method={method}
@@ -219,7 +212,6 @@ function PaymentOptionCard({ method, isSelected }: { method: PaymentMethod; isSe
             </Badge>
           )}
         </div>
-        <p className="text-sm text-muted-foreground truncate">{method.description}</p>
       </div>
     </Label>
   );
