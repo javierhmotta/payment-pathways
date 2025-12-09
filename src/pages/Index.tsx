@@ -309,7 +309,7 @@ const Index = () => {
           <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
             <TabsTrigger value="methods" className="flex items-center gap-2">
               <CreditCard className="w-4 h-4" />
-              Payment Options
+              Payment Method
             </TabsTrigger>
             <TabsTrigger value="history" className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
