@@ -219,26 +219,19 @@ const PaymentMethods = () => {
     })));
     toast.success("Default card updated");
   };
-  return <div className="space-y-6">
-      <PaymentMethodSelector selectedMethod={selectedMethod} onMethodChange={handleMethodChange} />
-
-      {selectedMethod === "credit_card" && <Card>
-          <CardHeader>
-            <CardTitle>Saved Credit Cards</CardTitle>
-            <CardDescription>
-              Manage your saved cards for automatic payments
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {savedCards.map(card => <PaymentMethodCard key={card.id} card={card} onRemove={() => handleRemoveCard(card.id)} onSetDefault={() => handleSetDefault(card.id)} />)}
-            <Button onClick={() => setShowAddCard(true)} variant="outline" className="w-full mt-4">
-              Add New Credit Card
-            </Button>
-          </CardContent>
-        </Card>}
-
+  return (
+    <div className="space-y-6">
+      <PaymentMethodSelector
+        selectedMethod={selectedMethod}
+        onMethodChange={handleMethodChange}
+        savedCards={savedCards}
+        onAddCard={() => setShowAddCard(true)}
+        onRemoveCard={handleRemoveCard}
+        onSetDefaultCard={handleSetDefault}
+      />
       <AddCardDialog open={showAddCard} onOpenChange={setShowAddCard} onAddCard={handleAddCard} />
-    </div>;
+    </div>
+  );
 };
 const Index = () => {
   const [activeTab, setActiveTab] = useState("methods");
