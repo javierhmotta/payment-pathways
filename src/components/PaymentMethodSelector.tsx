@@ -175,22 +175,44 @@ export function PaymentMethodSelector({
                     isSelected={selectedMethod === method.id}
                   />
                   
-                  {/* Inline Credit Card Management - only visible when credit card is selected */}
-                  {method.id === "credit_card" && isCreditCardSelected && (
-                    <div className="ml-10 mt-3 pl-4 border-l-2 border-primary/30 space-y-3">
-                      {savedCards.length > 0 && (
-                        <div className="space-y-2">
-                          {savedCards.map(card => (
-                            <PaymentMethodCard
-                              key={card.id}
-                              card={card}
-                              onRemove={() => onRemoveCard?.(card.id)}
-                              onSetDefault={() => onSetDefaultCard?.(card.id)}
-                            />
-                          ))}
-                        </div>
+                  {/* Inline Credit Card Management - always visible, but greyed when not selected */}
+                  {method.id === "credit_card" && savedCards.length > 0 && (
+                    <div 
+                      className={cn(
+                        "ml-10 mt-3 pl-4 border-l-2 space-y-3 transition-all duration-200",
+                        isCreditCardSelected 
+                          ? "border-primary/30 opacity-100" 
+                          : "border-muted opacity-50 pointer-events-none"
                       )}
+                    >
+                      <div className="space-y-2">
+                        {savedCards.map(card => (
+                          <PaymentMethodCard
+                            key={card.id}
+                            card={card}
+                            onRemove={() => onRemoveCard?.(card.id)}
+                            onSetDefault={() => onSetDefaultCard?.(card.id)}
+                          />
+                        ))}
+                      </div>
                       
+                      {isCreditCardSelected && (
+                        <Button
+                          onClick={onAddCard}
+                          variant="outline"
+                          size="sm"
+                          className="w-full flex items-center gap-2"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Add New Credit Card
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Show Add Card button when CC selected but no saved cards */}
+                  {method.id === "credit_card" && savedCards.length === 0 && isCreditCardSelected && (
+                    <div className="ml-10 mt-3 pl-4 border-l-2 border-primary/30">
                       <Button
                         onClick={onAddCard}
                         variant="outline"
