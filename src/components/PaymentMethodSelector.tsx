@@ -26,7 +26,7 @@ const paymentMethods: PaymentMethod[] = [{
   discount: 5
 }, {
   id: "usdt",
-  name: "USDT (Tether)",
+  name: "USDT",
   icon: <Coins className="w-5 h-5" />,
   type: "manual",
   discount: 5
