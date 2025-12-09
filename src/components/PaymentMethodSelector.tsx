@@ -74,7 +74,7 @@ export function PaymentMethodSelector({
                 {isManualSelected && <Check className="w-3 h-3 mr-1" />}
                 Manual
               </Badge>
-              <p className="text-sm text-muted-foreground">Choose to pay service fee invoices manually—when an invoice is due, you'll receive an email with a payment link</p>
+              
             </div>
             <div className="space-y-2">
               {manualMethods.map(method => <PaymentOptionCard key={method.id} method={method} isSelected={selectedMethod === method.id} />)}
@@ -88,7 +88,7 @@ export function PaymentMethodSelector({
                 {isRecurringSelected && <Check className="w-3 h-3 mr-1" />}
                 Automatic
               </Badge>
-              <p className="text-sm text-muted-foreground">Your default card will be charged automatically when service fee invoices are due—no other action is required.</p>
+              
             </div>
             <div className="space-y-2">
               {recurringMethods.map(method => <PaymentOptionCard key={method.id} method={method} isSelected={selectedMethod === method.id} />)}
