@@ -123,8 +123,6 @@ export function PaymentMethodSelector({
         {/* Discount Notice */}
         
 
-        {/* Selection Confirmation */}
-        {selectedMethodData}
       </CardContent>
     </Card>;
 }
